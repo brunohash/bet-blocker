@@ -1,18 +1,19 @@
 import os
 import tkinter as tk
-from tkinter import messagebox
+
 from PIL import Image, ImageTk
 from tkinter import BooleanVar
-from tkinter import ttk  # Importando o módulo ttk
-import logging
-import socket
+from tkinter import ttk
 
 import ctypes
 import shutil
 
 #import from functions/firewall.py
-from functions.firewall import bloquear_no_firewall
-from functions.blocker import bloquear_sites
+from src.functions.firewall import bloquear_no_firewall
+from src.functions.blocker import bloquear_sites
+
+# Configuração de log
+import logging
 
 # Configuração de log
 logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log', 
@@ -20,6 +21,8 @@ logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log',
 
 # Caminho do arquivo de blocklist
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+
+CURRENT_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 class Cores:
     CO0 = "#f0f3f5"  # Cinza claro
@@ -90,28 +93,13 @@ def carregar_blocklist():
 def regra_existente(dominio):
     """Verifica se a regra de bloqueio já existe no firewall."""
     try:
-        regra_nome = f'Bloqueio de {dominio}'
-        output = os.popen('netsh advfirewall firewall show rule name="{}"'.format(regra_nome)).read()
-        return regra_nome in output
+        rule_name = f'Bloqueio de {dominio}'
+        output = os.popen('netsh advfirewall firewall show rule name="{}"'.format(rule_name)).read()
+        return rule_name in output
     except Exception as e:
-        logging.error(f"Erro ao verificar regra: {e}")
+        logger.error(f"Erro ao verificar regra: {e}")
         return False
 
-def bloquear_por_dominio(dominio):
-    """Adiciona uma entrada ao arquivo hosts para bloquear um domínio."""
-    try:
-        if regra_existente(dominio):
-            logging.info(f"O domínio {dominio} já está bloqueado.")
-            return True
-
-        with open(r"C:\Windows\System32\drivers\etc\hosts", "a") as hosts_file:
-            hosts_file.write(f"0.0.0.0 {dominio}\n")
-        
-        logging.info(f"Domínio {dominio} bloqueado com sucesso.")
-        return True
-    except Exception as e:
-        logging.error(f"Falha ao bloquear {dominio} no arquivo hosts: {e}")
-        return False
 
 # Frames
 frame_logo = tk.Frame(janela, width=410, height=60, bg=Cores.CO1, relief="flat")
@@ -121,7 +109,7 @@ frame_corpo = tk.Frame(janela, width=410, height=400, bg=Cores.CO1, relief="flat
 frame_corpo.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
 # Configurando frame logo
-imagem = Image.open(os.path.join(diretorio_atual, "assets/block.png"))
+imagem = Image.open(os.path.join(CURRENT_FOLDER, "assets/block.png"))
 imagem = imagem.resize((40, 40))
 image = ImageTk.PhotoImage(imagem)
 
