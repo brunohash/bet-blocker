@@ -68,7 +68,12 @@ class AppInitializer:
         self.app_frame_body.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
     def run(self):
+        self.app_window.focus_force()
+
+        self.app_window.after(100, lambda: logger.info("Bem-vindo(a) ao Bloqueador de Bets. A aplicação está em execução."))
+
         self.app_window.mainloop()
+
         logger.info("Aplicação encerrada.")
 
     def get_or_create_blocklist_path(self):
@@ -209,7 +214,7 @@ class AppInitializer:
 
 
 ## Auxiliares
-def solicitar_permissao():
+def request_admin_grant():
     if ctypes.windll.shell32.IsUserAnAdmin():
         return True
     else:
@@ -221,7 +226,7 @@ def solicitar_permissao():
 
 def copy_hosts():
     """Copia o arquivo ./hosts para C:\Windows\System32\drivers\etc\hosts."""
-    if solicitar_permissao():
+    if request_admin_grant():
         try:
             origem = get_path_from_context("hosts")
             destino = r"C:\Windows\System32\drivers\etc\hosts"
@@ -229,41 +234,3 @@ def copy_hosts():
         except Exception as e:
             messagebox.showerror("Erro", f"Falha ao copiar o arquivo hosts: {e}")
             logger.error(f"Erro ao copiar o arquivo hosts: {e}")
-
-
-def request_admin_grant() -> bool:
-    if ctypes.windll.shell32.IsUserAnAdmin():
-        return True
-    else:
-        ctypes.windll.shell32.ShellExecuteW(
-            None, "runas", os.sys.executable, " ".join(os.sys.argv), None, 1
-        )
-        return False
-
-
-def is_exists_firewall_rule(dominio):
-    try:
-        rule_name = f"Bloqueio de {dominio}"
-        output = os.popen(
-            'netsh advfirewall firewall show rule name="{}"'.format(rule_name)
-        ).read()
-        return rule_name in output
-    except Exception as e:
-        logger.error(f"Erro ao verificar regra: {e}")
-        return False
-
-
-def domain_block(dominio: str) -> bool:
-    try:
-        if is_exists_firewall_rule(dominio):
-            logger.info(f"O domínio {dominio} já está bloqueado.")
-            return True
-
-        with open(r"C:\Windows\System32\drivers\etc\hosts", "a") as hosts_file:
-            hosts_file.write(f"0.0.0.0 {dominio}\n")
-
-        logger.info(f"Domínio {dominio} bloqueado com sucesso.")
-        return True
-    except Exception as e:
-        logger.error(f"Falha ao bloquear {dominio} no arquivo hosts: {e}")
-        return False
