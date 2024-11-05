@@ -1,9 +1,9 @@
 import os
 import logging
 import socket
-import re
 
-def resolver_ipv4(dominio):
+
+def resolve_domain_to_ipv4(dominio):
     """Resolve um domínio para um endereço IPv4."""
     try:
         # Forçando a resolução para IPv4
@@ -14,10 +14,11 @@ def resolver_ipv4(dominio):
         logging.error(f"Falha ao resolver {dominio} para IPv4: {e}")
         return None
 
-def bloquear_no_firewall(dominio):
+
+def firewall_block(dominio):
     try:
         # Obter o IP do domínio
-        output = resolver_ipv4(dominio)
+        output = resolve_domain_to_ipv4(dominio)
 
         # Verifica se o IP é válido
         if not output:
