@@ -1,5 +1,6 @@
 from enum import Enum
 import tkinter as tk
+from PIL import Image, ImageTk
 from src.utils.get_paths import get_path_from_context
 
 
@@ -24,7 +25,38 @@ class AppInitializer:
         self.app_window.geometry("410x460")
         self.app_window.configure(background=AppColors.CINZA_CLARO.value)
         self.app_window.resizable(width=False, height=False)
-        blacklist_filepath = get_path_from_context("blacklist.txt")
+        self.app_frame_logo = tk.Frame(self.app_window, width=410, height=60, bg=AppColors.CINZA_CLARO.value, relief="flat")
+        self.app_frame_logo.grid(row=0, column=0, columnspan=2, sticky="nsew")
+        self.app_frame_body = tk.Frame(self.app_window, width=410, height=400, bg=AppColors.CINZA_CLARO.value, relief="flat")
+
+        self.setup_frame_logo()
+
+
+    def setup_frame_logo(self):
+        logo = Image.open(get_path_from_context("assets/block.png"))
+        logo.resize((40, 40))
+        logo = ImageTk.PhotoImage(logo)
+        app_label_img = tk.Label(self.app_frame_logo, height=60, image=logo,
+                                      bg=AppColors.CINZA_CLARO.value)
+        app_label_img.place(x=20, y=0)
+        app_label_logo = tk.Label(self.app_frame_logo, text="Bloqueador de Apostas", height=1, anchor="ne",                               font=('Ivy', 20), bg=AppColors.CINZA_CLARO.value, fg=AppColors.PRETO.value)
+        app_label_logo.place(x=70, y=12)
+        app_label_line = tk.Label(self.app_frame_logo, text="Bloqueador de Apostas", height=1, width="445",
+                                       anchor="nw", font=('Ivy', 1), bg=AppColors.VERDE.value)
+        app_label_line.place(x=0, y=57)
+
+    def setup_frame_body(self):
+
+
+        def setup_app_logo(self):
+            tk.Label(self.app_frame_logo,
+                     height=60,
+                     image=self.app_logo,
+                     bg=AppColors.CINZA_CLARO.value,
+                     text="Bloqueador de Apostas"
+            self.app_label_logo.place(x=20, y=0)
+
+        # blacklist_filepath = get_path_from_context("blacklist.txt")
 
 def request_admin_grant() -> bool:
     """ # Função para solicitar permissão de administrador """
