@@ -12,37 +12,6 @@ from src.functions.blocker import bloquear_sites
 from src.utils.logs import logger
 from src.utils.get_paths import get_path_from_context
 
-# Cores da interface
-co0 = "#f0f3f5" # Cinza claro
-co1 = "#feffff" # Branco
-co2 = "#3fb5a3" # Verde
-co3 = "#f25f5c" # Vermelho
-co4 = "#403d3d" # Preto
-
-azul_color = "#3f9dfb"  # Azul para o botão
-green_color = "#3fb5a3"  # Verde para o botão
-white_color = "#ffffff"  # Branco para a fonte
-orange_color = "orange"  # Laranja para o botão
-
-# Configuração da janela principal
-janela = tk.Tk()
-janela.title("Bloqueador de Apostas")
-janela.geometry("410x460")  # Aumente a altura da janela para a barra de progresso
-janela.configure(background=co1)
-janela.resizable(width=False, height=False)
-
-# Caminho do arquivo de blacklist
-CURRENT_FOLDER = get_path_from_context()
-
-
-
-
-
-
-
-
-
-
 
 def is_exists_firewall_rule(dominio) -> bool:
     """Verifica se a regra de bloqueio já existe no firewall."""

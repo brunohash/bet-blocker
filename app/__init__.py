@@ -1,3 +1,31 @@
+from enum import Enum
+import tkinter as tk
+from src.utils.get_paths import get_path_from_context
+
+
+class AppColors(Enum):
+    CINZA_CLARO = "#f0f3f5"
+    BRANCO = "#feffff"
+    VERDE = "#3fb5a3"
+    VERMELHO = "#f25f5c"
+    PRETO = "#403d3d"
+
+class AppButtonColors(Enum):
+    AZUL = "#3f9dfb"
+    VERDE = "#3fb5a3"
+    BRANCO = "#ffffff"
+    LARANJA = "orange"
+
+
+class AppInitializer:
+    def __init__(self):
+        self.app_window = tk.Tk()
+        self.app_window.title = "Bloqueador de Apostas"
+        self.app_window.geometry("410x460")
+        self.app_window.configure(background=AppColors.CINZA_CLARO.value)
+        self.app_window.resizable(width=False, height=False)
+        blacklist_filepath = get_path_from_context("blacklist.txt")
+
 def request_admin_grant() -> bool:
     """ # Função para solicitar permissão de administrador """
     if ctypes.windll.shell32.IsUserAnAdmin():
