@@ -2,21 +2,11 @@ import logging
 import os
 import tkinter as tk
 from tkinter import messagebox
-from tkinter import BooleanVar
-from tkinter import ttk
-import socket
 
-from functions.firewall import bloquear_no_firewall
+from src.functions.firewall import bloquear_no_firewall
+from src.utils.logs import logger
+from src.utils.get_paths import get_path_from_context
 
-
-caminho_pasta = os.path.dirname(os.path.abspath(__file__))
-caminho_pasta_anterior = os.path.dirname(caminho_pasta)
-
-sites_file = os.path.join(caminho_pasta_anterior, "blacklist.txt")
-
-print(caminho_pasta_anterior)  # Para verificar o caminho resultante
-
-print("Caminho da pasta: ", caminho_pasta)
 
 def bloquear_sites(checkbox_var, lista, progresso,janela):
 
@@ -27,8 +17,11 @@ def bloquear_sites(checkbox_var, lista, progresso,janela):
 
     try:
 
+        blacklist_path = get_path_from_context(file_name="blacklist.txt")
 
-        with open(sites_file, "r") as file:
+        logger.info(f"Usando o seguinte arquivo de blacklist: {blacklist_path}")
+
+        with open(blacklist_path, "r") as file:
             sites = file.readlines()
             if not sites:
                 messagebox.showwarning("Aviso", "A lista de sites a serem bloqueados está vazia.")

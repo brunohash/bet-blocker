@@ -1,24 +1,16 @@
 import os
 import tkinter as tk
-from tkinter import messagebox
+
 from PIL import Image, ImageTk
 from tkinter import BooleanVar
-from tkinter import ttk  # Importando o módulo ttk
-import logging
-import socket
+from tkinter import ttk
 
 import ctypes
 import shutil
 
-from functions.firewall import bloquear_no_firewall
-from functions.blocker import bloquear_sites
-
-# Configuração de log
-logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log',
-                    format='%(asctime)s:%(levelname)s:%(message)s')
-
-# Caminho do arquivo de blacklist
-diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+from src.functions.blocker import bloquear_sites
+from src.utils.logs import logger
+from src.utils.get_paths import get_path_from_context
 
 # Cores da interface
 co0 = "#f0f3f5" # Cinza claro
@@ -40,78 +32,28 @@ janela.configure(background=co1)
 janela.resizable(width=False, height=False)
 
 # Caminho do arquivo de blacklist
-diretorio_atual = os.path.dirname(os.path.abspath(__file__))
-sites_file = os.path.join(diretorio_atual, "blacklist.txt")
-
-# Função para solicitar permissão de administrador
-def solicitar_permissao():
-    if ctypes.windll.shell32.IsUserAnAdmin():
-        return True
-    else:
-        # Se não for administrador, solicita permissão
-        ctypes.windll.shell32.ShellExecuteW(None, "runas", os.sys.executable, " ".join(os.sys.argv), None, 1)
-        return False
-
-def copiar_hosts():
-    """Copia o arquivo ./hosts para C:\Windows\System32\drivers\etc\hosts."""
-    if solicitar_permissao():
-        try:
-            # Caminho do arquivo de origem e destino
-            origem = os.path.join(diretorio_atual, "hosts")
-            destino = r"C:\Windows\System32\drivers\etc\hosts"
-
-            # Copiando o arquivo
-            shutil.copyfile(origem, destino)
-            messagebox.showinfo("Sucesso", "Arquivo hosts copiado com sucesso.")
-        except Exception as e:
-            messagebox.showerror("Erro", f"Falha ao copiar o arquivo hosts: {e}")
-            logging.error(f"Erro ao copiar o arquivo hosts: {e}")
+CURRENT_FOLDER = get_path_from_context()
 
 
-def carregar_blacklist():
-    """Carrega a lista de sites bloqueados do arquivo blacklist.txt."""
-    try:
-        with open(sites_file, "r") as file:
-            sites = file.readlines()
-            if not sites:
-                messagebox.showinfo("Informação", "A lista de sites bloqueados está vazia.")
-            else:
-                for site in sites:
-                    site = site.strip()  # Remove espaços em branco
-                    if site:  # Adiciona apenas se não estiver vazio
-                        lista.insert(tk.END, site)
-    except FileNotFoundError:
-        logging.error("Arquivo de blacklist não encontrado. Criando um novo arquivo.")
-        with open(sites_file, "w") as file:
-            file.write("")  # Cria um novo arquivo se não existir
-        messagebox.showerror("Erro", "Arquivo de blacklist não encontrado. Um novo arquivo foi criado.")
-        carregar_blacklist()
 
-def regra_existente(dominio):
+
+
+
+
+
+
+
+
+def is_exists_firewall_rule(dominio) -> bool:
     """Verifica se a regra de bloqueio já existe no firewall."""
     try:
-        regra_nome = f'Bloqueio de {dominio}'
-        output = os.popen('netsh advfirewall firewall show rule name="{}"'.format(regra_nome)).read()
-        return regra_nome in output
+        rule_name = f'Bloqueio de {dominio}'
+        output = os.popen('netsh advfirewall firewall show rule name="{}"'.format(rule_name)).read()
+        return rule_name in output
     except Exception as e:
-        logging.error(f"Erro ao verificar regra: {e}")
+        logger.error(f"Erro ao verificar regra: {e}")
         return False
 
-def bloquear_por_dominio(dominio):
-    """Adiciona uma entrada ao arquivo hosts para bloquear um domínio."""
-    try:
-        if regra_existente(dominio):
-            logging.info(f"O domínio {dominio} já está bloqueado.")
-            return True
-
-        with open(r"C:\Windows\System32\drivers\etc\hosts", "a") as hosts_file:
-            hosts_file.write(f"0.0.0.0 {dominio}\n")
-
-        logging.info(f"Domínio {dominio} bloqueado com sucesso.")
-        return True
-    except Exception as e:
-        logging.error(f"Falha ao bloquear {dominio} no arquivo hosts: {e}")
-        return False
 
 # Frames
 frame_logo = tk.Frame(janela, width=410, height=60, bg=co1, relief="flat")
@@ -121,7 +63,7 @@ frame_corpo = tk.Frame(janela, width=410, height=400, bg=co1, relief="flat")
 frame_corpo.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
 # Configurando frame logo
-imagem = Image.open(os.path.join(diretorio_atual, "assets/block.png"))
+imagem = Image.open(os.path.join(CURRENT_FOLDER, "assets/block.png"))
 imagem = imagem.resize((40, 40))
 image = ImageTk.PhotoImage(imagem)
 
@@ -192,7 +134,7 @@ b_bloquear.place(x=270, y=50)
 # Chame a função copiar_hosts em algum lugar do seu código, como em um botão
 botao_copiar_hosts = tk.Button(
     frame_corpo, text="Bloquear DNS", width=15, height=2,
-    bg=azul_color, fg=white_color, command=copiar_hosts, relief="flat"
+    bg=azul_color, fg=white_color, command=hosts_file_copy, relief="flat"
 )
 botao_copiar_hosts.place(x=270, y=100)
 
@@ -204,7 +146,7 @@ botao_apoio = tk.Button(
 botao_apoio.place(x=270, y=150)
 
 # Carregar a blacklist na inicialização
-carregar_blacklist()
+blacklist_load()
 
 # Iniciar o loop da interface
 janela.mainloop()
