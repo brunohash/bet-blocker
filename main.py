@@ -18,7 +18,7 @@ from functions.blocker import bloquear_sites
 logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log', 
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
-# Caminho do arquivo de blacklist
+# Caminho do arquivo de blocklist
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 
 # Cores da interface
@@ -40,9 +40,9 @@ janela.geometry("410x460")  # Aumente a altura da janela para a barra de progres
 janela.configure(background=co1)
 janela.resizable(width=False, height=False)
 
-# Caminho do arquivo de blacklist
+# Caminho do arquivo de blocklist
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
-sites_file = os.path.join(diretorio_atual, "blacklist.txt")
+sites_file = os.path.join(diretorio_atual, "blocklist.txt")
 
 # Função para solicitar permissão de administrador
 def solicitar_permissao():
@@ -69,8 +69,8 @@ def copiar_hosts():
             logging.error(f"Erro ao copiar o arquivo hosts: {e}")
 
 
-def carregar_blacklist():
-    """Carrega a lista de sites bloqueados do arquivo blacklist.txt."""
+def carregar_blocklist():
+    """Carrega a lista de sites bloqueados do arquivo blocklist.txt."""
     try:
         with open(sites_file, "r") as file:
             sites = file.readlines()
@@ -82,11 +82,11 @@ def carregar_blacklist():
                     if site:  # Adiciona apenas se não estiver vazio
                         lista.insert(tk.END, site)
     except FileNotFoundError:
-        logging.error("Arquivo de blacklist não encontrado. Criando um novo arquivo.")
+        logging.error("Arquivo de blocklist não encontrado. Criando um novo arquivo.")
         with open(sites_file, "w") as file:
             file.write("")  # Cria um novo arquivo se não existir
-        messagebox.showerror("Erro", "Arquivo de blacklist não encontrado. Um novo arquivo foi criado.")
-        carregar_blacklist()
+        messagebox.showerror("Erro", "Arquivo de blocklist não encontrado. Um novo arquivo foi criado.")
+        carregar_blocklist()
 
 def regra_existente(dominio):
     """Verifica se a regra de bloqueio já existe no firewall."""
@@ -144,7 +144,7 @@ l_linha = tk.Label(
 l_linha.place(x=0, y=57)
 
 # Configurando frame corpo font negrito
-l_blacklist = tk.Label(
+l_blocklist = tk.Label(
     frame_corpo, 
     text="Lista de bets bloqueadas", 
     height=1, font=('Ivy', 12),
@@ -154,7 +154,7 @@ l_blacklist = tk.Label(
     justify="left",
     wraplength=380
 )
-l_blacklist.place(x=18, y=20)
+l_blocklist.place(x=18, y=20)
 
 # Lista de sites bloqueados
 lista = tk.Listbox(
@@ -204,8 +204,8 @@ botao_apoio = tk.Button(
 )
 botao_apoio.place(x=270, y=150)
 
-# Carregar a blacklist na inicialização
-carregar_blacklist()
+# Carregar a blocklist na inicialização
+carregar_blocklist()
 
 # Iniciar o loop da interface
 janela.mainloop()
