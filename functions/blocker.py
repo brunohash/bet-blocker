@@ -12,7 +12,7 @@ from functions.firewall import bloquear_no_firewall
 caminho_pasta = os.path.dirname(os.path.abspath(__file__))
 caminho_pasta_anterior = os.path.dirname(caminho_pasta)
 
-sites_file = os.path.join(caminho_pasta_anterior, "blacklist.txt")
+sites_file = os.path.join(caminho_pasta_anterior, "blocklist.txt")
 
 print(caminho_pasta_anterior)  # Para verificar o caminho resultante
 
@@ -20,7 +20,7 @@ print("Caminho da pasta: ", caminho_pasta)
 
 def bloquear_sites(checkbox_var, lista, progresso,janela):
         
-    """Bloqueia os sites listados na blacklist se o usuário concordar em participar da rede de apoio."""
+    """Bloqueia os sites listados na blocklist se o usuário concordar em participar da rede de apoio."""
     if not checkbox_var.get():
         messagebox.showwarning("Aviso", "Você precisa concordar em participar da rede de apoio.")
         return
