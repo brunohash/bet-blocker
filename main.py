@@ -16,7 +16,7 @@ from src.functions.blocker import bloquear_sites
 import logging
 
 # Configuração de log
-logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log', 
+logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log',
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Caminho do arquivo de blocklist
@@ -62,7 +62,7 @@ def copiar_hosts():
             # Caminho do arquivo de origem e destino
             origem = os.path.join(diretorio_atual, "hosts")
             destino = r"C:\Windows\System32\drivers\etc\hosts"
-            
+
             # Copiando o arquivo
             shutil.copyfile(origem, destino)
             messagebox.showinfo("Sucesso", "Arquivo hosts copiado com sucesso.")
@@ -121,24 +121,24 @@ l_logo = tk.Label(frame_logo, text="Bloqueador de Apostas", height=1, anchor="ne
 l_logo.place(x=70, y=12)
 
 l_linha = tk.Label(
-    frame_logo, 
-    text="Bloqueador de Apostas", 
-    height=1, 
-    width="445", 
-    anchor="nw", 
-    font=('Ivy', 1), 
+    frame_logo,
+    text="Bloqueador de Apostas",
+    height=1,
+    width="445",
+    anchor="nw",
+    font=('Ivy', 1),
     bg=Cores.CO2
 )
 l_linha.place(x=0, y=57)
 
 # Configurando frame corpo font negrito
 l_blocklist = tk.Label(
-    frame_corpo, 
-    text="Lista de bets bloqueadas", 
+    frame_corpo,
+    text="Lista de bets bloqueadas",
     height=1, font=('Ivy', 12),
-    bg=Cores.CO1, 
-    fg=Cores.CO4, 
-    anchor="w", 
+    bg=Cores.CO1,
+    fg=Cores.CO4,
+    anchor="w",
     justify="left",
     wraplength=380
 )
@@ -182,7 +182,8 @@ b_bloquear.place(x=270, y=50)
 # Chame a função copiar_hosts em algum lugar do seu código, como em um botão
 botao_copiar_hosts = tk.Button(
     frame_corpo, text="Bloquear DNS", width=15, height=2,
-    bg=Cores.AZUL, fg=Cores.BRANCO, command=copiar_hosts, relief="flat"
+    bg=Cores.AZUL, fg=Cores.BRANCO,
+    command=copiar_hosts, relief="flat"
 )
 
 botao_copiar_hosts.place(x=270, y=100)
