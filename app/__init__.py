@@ -4,7 +4,7 @@ import shutil
 from enum import Enum
 
 import tkinter as tk
-from tkinter import BooleanVar, ttk
+from tkinter import BooleanVar, ttk, messagebox
 from PIL import Image, ImageTk
 
 from src.utils.get_paths import get_path_from_context
@@ -29,11 +29,22 @@ class AppButtonColors(Enum):
 
 class AppInitializer:
     def __init__(self):
+        # Setup main app window
         self.app_window = tk.Tk()
-        self.app_window.title = "Bloqueador de Apostas"
+        self.app_window.title("Bloqueador de Apostas")  # Corrigido para setar o título corretamente
         self.app_window.geometry("410x460")
         self.app_window.configure(background=AppColors.CINZA_CLARO.value)
         self.app_window.resizable(width=False, height=False)
+
+        # Setup frames
+        self.setup_frames()
+
+        # Setup components
+        self.setup_frame_logo()
+        self.setup_frame_body()
+
+    def setup_frames(self):
+        # Logo Frame
         self.app_frame_logo = tk.Frame(
             self.app_window,
             width=410,
@@ -42,6 +53,8 @@ class AppInitializer:
             relief="flat",
         )
         self.app_frame_logo.grid(row=0, column=0, columnspan=2, sticky="nsew")
+
+        # Body Frame
         self.blocklist_path = self.get_or_create_blocklist_path()
         self.app_frame_body = tk.Frame(
             self.app_window,
@@ -50,10 +63,7 @@ class AppInitializer:
             bg=AppColors.CINZA_CLARO.value,
             relief="flat",
         )
-
-        self.setup_app_logo()
-        self.setup_frame_logo()
-        self.setup_frame_body()
+        self.app_frame_body.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
     def run(self):
         self.app_window.mainloop()
@@ -69,13 +79,16 @@ class AppInitializer:
         return file_path
 
     def setup_frame_logo(self):
-        logo = Image.open(get_path_from_context("assets/block.png"))
-        logo.resize((40, 40))
-        logo = ImageTk.PhotoImage(logo)
+        # Logo image
+        logo = Image.open(get_path_from_context("assets/block.png")).resize((40, 40))
+        self.logo_image = ImageTk.PhotoImage(logo)  # Guarda a imagem como atributo da classe
+
         app_label_img = tk.Label(
-            self.app_frame_logo, height=60, image=logo, bg=AppColors.CINZA_CLARO.value
+            self.app_frame_logo, height=60, image=self.logo_image, bg=AppColors.CINZA_CLARO.value
         )
         app_label_img.place(x=20, y=0)
+
+        # Logo text
         app_label_logo = tk.Label(
             self.app_frame_logo,
             text="Bloqueador de Apostas",
@@ -86,9 +99,10 @@ class AppInitializer:
             fg=AppColors.PRETO.value,
         )
         app_label_logo.place(x=70, y=12)
+
+        # Divider line
         app_label_line = tk.Label(
             self.app_frame_logo,
-            text="Bloqueador de Apostas",
             height=1,
             width="445",
             anchor="nw",
@@ -98,6 +112,7 @@ class AppInitializer:
         app_label_line.place(x=0, y=57)
 
     def setup_frame_body(self):
+        # Blocklist label
         blocklist = tk.Label(
             self.app_frame_body,
             text="Lista de bets bloqueadas",
@@ -108,6 +123,7 @@ class AppInitializer:
         )
         blocklist.place(x=18, y=20)
 
+        # Blocklist listbox
         lstbox_blocklist = tk.Listbox(
             self.app_frame_body,
             width=40,
@@ -116,15 +132,15 @@ class AppInitializer:
             fg=AppColors.PRETO.value,
         )
         lstbox_blocklist.place(x=20, y=50)
-
         lstbox_blocklist.insert(tk.END, *self.get_sites_from_blocklist())
 
-        progress_bar = tk.ttk.Progressbar(
+        # Progress bar
+        progress_bar = ttk.Progressbar(
             self.app_frame_body, orient="horizontal", length=360, mode="determinate"
         )
-
         progress_bar.place(x=20, y=330)
 
+        # Checkbox for agreement
         _chk_choice = BooleanVar()
         check_box = tk.Checkbutton(
             self.app_frame_body,
@@ -139,6 +155,7 @@ class AppInitializer:
         )
         check_box.place(x=20, y=370)
 
+        # Buttons
         block_button = tk.Button(
             self.app_frame_body,
             text="Bloquear Firewall",
@@ -151,7 +168,6 @@ class AppInitializer:
             ),
             relief="flat",
         )
-
         block_button.place(x=270, y=100)
 
         copy_hosts_button = tk.Button(
@@ -164,8 +180,7 @@ class AppInitializer:
             command=copy_hosts,
             relief="flat",
         )
-
-        copy_hosts_button.place(x=270, y=150)
+        copy_hosts_button.place(x=270, y=150)  # Mantém a posição correta para evitar sobreposição
 
         support_button = tk.Button(
             self.app_frame_body,
@@ -176,31 +191,12 @@ class AppInitializer:
             fg=AppColors.BRANCO.value,
             relief="flat",
         )
-
-        support_button.place(x=270, y=150)
-
-    def setup_app_logo(self):
-
-        img = Image.open(get_path_from_context("assets/block.png"))
-        img.resize((40, 40))
-        img_tk = ImageTk.PhotoImage(img)
-
-        img_frame = tk.Label(
-            self.app_frame_logo,
-            height=60,
-            image=img_tk,
-            bg=AppColors.CINZA_CLARO.value,
-            text="Bloqueador de Apostas",
-        )
-        img_frame.place(x=20, y=0)
+        support_button.place(x=270, y=200)  # Ajustado para evitar sobreposição
 
     def get_sites_from_blocklist(self) -> list:
         with open(self.blocklist_path, "r") as file:
             sites = file.readlines()
-
-        parsed_sites = [site.strip() for site in sites if site.strip()]
-
-        return parsed_sites
+        return [site.strip() for site in sites if site.strip()]
 
 
 ## Auxiliares
@@ -208,7 +204,6 @@ def solicitar_permissao():
     if ctypes.windll.shell32.IsUserAnAdmin():
         return True
     else:
-        # Se não for administrador, solicita permissão
         ctypes.windll.shell32.ShellExecuteW(
             None, "runas", os.sys.executable, " ".join(os.sys.argv), None, 1
         )
@@ -219,26 +214,18 @@ def copy_hosts():
     """Copia o arquivo ./hosts para C:\Windows\System32\drivers\etc\hosts."""
     if solicitar_permissao():
         try:
-            # Caminho do arquivo de origem e destino
             origem = get_path_from_context("hosts")
             destino = r"C:\Windows\System32\drivers\etc\hosts"
-
-            # Copiando o arquivo
             shutil.copyfile(origem, destino)
-
         except Exception as e:
-            # Warning: Mac OS X doest not support this function
             messagebox.showerror("Erro", f"Falha ao copiar o arquivo hosts: {e}")
-            # Warning: Mac OS X doest not support this function
             logger.error(f"Erro ao copiar o arquivo hosts: {e}")
 
 
 def request_admin_grant() -> bool:
-    """# Função para solicitar permissão de administrador"""
     if ctypes.windll.shell32.IsUserAnAdmin():
         return True
     else:
-        # Se não for administrador, solicita permissão
         ctypes.windll.shell32.ShellExecuteW(
             None, "runas", os.sys.executable, " ".join(os.sys.argv), None, 1
         )
@@ -246,7 +233,6 @@ def request_admin_grant() -> bool:
 
 
 def is_exists_firewall_rule(dominio):
-    """Verifica se a regra de bloqueio já existe no firewall."""
     try:
         rule_name = f"Bloqueio de {dominio}"
         output = os.popen(
@@ -259,7 +245,6 @@ def is_exists_firewall_rule(dominio):
 
 
 def domain_block(dominio: str) -> bool:
-    """Adiciona uma entrada ao arquivo hosts para bloquear um domínio."""
     try:
         if is_exists_firewall_rule(dominio):
             logger.info(f"O domínio {dominio} já está bloqueado.")
