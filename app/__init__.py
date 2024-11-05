@@ -11,7 +11,6 @@ from src.utils.get_paths import get_path_from_context
 from src.functions.blocker import restrict_sites
 from src.utils.logs import logger
 
-
 class AppColors(Enum):
     CINZA_CLARO = "#f0f3f5"
     BRANCO = "#feffff"
@@ -19,13 +18,11 @@ class AppColors(Enum):
     VERMELHO = "#f25f5c"
     PRETO = "#403d3d"
 
-
 class AppButtonColors(Enum):
     AZUL = "#3f9dfb"
     VERDE = "#3fb5a3"
     BRANCO = "#ffffff"
     LARANJA = "orange"
-
 
 class AppInitializer:
     def __init__(self):
@@ -34,7 +31,7 @@ class AppInitializer:
         self.app_window.title(
             "Bloqueador de Apostas"
         )  # Corrigido para setar o título corretamente
-        self.app_window.geometry("410x460")
+        self.app_window.geometry("410x470")
         self.app_window.configure(background=AppColors.CINZA_CLARO.value)
         self.app_window.resizable(width=False, height=False)
 
@@ -158,14 +155,13 @@ class AppInitializer:
             self.app_frame_body,
             text="Ao clicar em 'Bloquear Sites', você concorda em comunicar a sua rede de apoio possíveis situações de jogo compulsivo.",
             variable=_chk_choice,
-            bg=AppColors.BRANCO.value,
             fg=AppColors.PRETO.value,
             font=("Ivy", 8),
-            wraplength=380,
+            wraplength=360,
             anchor="w",
             justify="left",
         )
-        check_box.place(x=20, y=370)
+        check_box.place(x=15, y=360)
 
         # Buttons
         block_button = tk.Button(
@@ -180,7 +176,7 @@ class AppInitializer:
             ),
             relief="flat",
         )
-        block_button.place(x=270, y=100)
+        block_button.place(x=270, y=52)
 
         copy_hosts_button = tk.Button(
             self.app_frame_body,
@@ -193,7 +189,7 @@ class AppInitializer:
             relief="flat",
         )
         copy_hosts_button.place(
-            x=270, y=150
+            x=270, y=100
         )  # Mantém a posição correta para evitar sobreposição
 
         support_button = tk.Button(
@@ -205,7 +201,7 @@ class AppInitializer:
             fg=AppColors.BRANCO.value,
             relief="flat",
         )
-        support_button.place(x=270, y=200)  # Ajustado para evitar sobreposição
+        support_button.place(x=270, y=148)  # Ajustado para evitar sobreposição
 
     def get_sites_from_blocklist(self) -> list:
         with open(self.blocklist_path, "r") as file:

@@ -4,16 +4,14 @@ from src.utils.logs import logger
 def DEPRECATED_is_exists_firewall_rule(dominio):
     try:
         rule_name = f"Bloqueio de {dominio}"
-        output = os.popen(
-            'netsh advfirewall firewall show rule name="{}"'.format(rule_name)
-        ).read()
+        output = os.popen( 'netsh advfirewall firewall show rule name="{}"'.format(rule_name) ).read()
         return rule_name in output
     except Exception as e:
         logger.error(f"Erro ao verificar regra: {e}")
         return False
 
-
 def DEPRECATED_domain_block(dominio: str) -> bool:
+
     try:
         if DEPRECATED_is_exists_firewall_rule(dominio):
             logger.info(f"O domínio {dominio} já está bloqueado.")
@@ -24,6 +22,7 @@ def DEPRECATED_domain_block(dominio: str) -> bool:
 
         logger.info(f"Domínio {dominio} bloqueado com sucesso.")
         return True
+
     except Exception as e:
         logger.error(f"Falha ao bloquear {dominio} no arquivo hosts: {e}")
         return False

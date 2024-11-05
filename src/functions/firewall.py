@@ -2,7 +2,6 @@ import os
 import logging
 import socket
 
-
 def resolve_domain_to_ipv4(dominio):
     """Resolve um domínio para um endereço IPv4."""
     try:
@@ -30,6 +29,7 @@ def firewall_block(dominio):
         os.system(regra)
         logging.info(f"Regra de bloqueio adicionada para {dominio}.")
         return True  # Indica que o bloqueio foi bem-sucedido
+        
     except Exception as e:
         logging.error(f"Falha ao adicionar regra de bloqueio para {dominio}: {e}")
         return False  # Indica que o bloqueio falhou
