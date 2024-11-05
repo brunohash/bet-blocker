@@ -1,9 +1,15 @@
 import os
+import ctypes
+import shutil
 from enum import Enum
+
 import tkinter as tk
 from tkinter import BooleanVar, ttk
 from PIL import Image, ImageTk
+
 from src.utils.get_paths import get_path_from_context
+from src.functions.blocker import bloquear_sites
+from src.utils.logs import logger
 
 
 class AppColors(Enum):
@@ -49,9 +55,9 @@ class AppInitializer:
         self.setup_frame_logo()
         self.setup_frame_body()
 
-        blocklist_load()
-
+    def run(self):
         self.app_window.mainloop()
+        logger.info("Aplicação iniciada com sucesso.")
 
     def get_or_create_blocklist_path(self):
         file_path = get_path_from_context("blocklist.txt")
@@ -111,6 +117,8 @@ class AppInitializer:
         )
         lstbox_blocklist.place(x=20, y=50)
 
+        lstbox_blocklist.insert(tk.END, *self.get_sites_from_blocklist())
+
         progress_bar = tk.ttk.Progressbar(
             self.app_frame_body, orient="horizontal", length=360, mode="determinate"
         )
@@ -138,7 +146,9 @@ class AppInitializer:
             height=2,
             bg=AppColors.VERDE.value,
             fg=AppColors.BRANCO.value,
-            command=lambda: bloquear_sites(checkbox_var, lista, progresso, janela),
+            command=lambda: bloquear_sites(
+                _chk_choice, lstbox_blocklist, progress_bar, self.app_window
+            ),
             relief="flat",
         )
 
@@ -184,6 +194,14 @@ class AppInitializer:
         )
         self.app_label_logo.place(x=20, y=0)
 
+    def get_sites_from_blocklist(self) -> list:
+        with open(self.blocklist_path, "r") as file:
+            sites = file.readlines()
+
+        parsed_sites = [site.strip() for site in sites if site.strip()]
+
+        return parsed_sites
+
 
 ## Auxiliares
 def solicitar_permissao():
@@ -202,15 +220,17 @@ def copy_hosts():
     if solicitar_permissao():
         try:
             # Caminho do arquivo de origem e destino
-            origem = os.path.join(diretorio_atual, "hosts")
+            origem = get_path_from_context("hosts")
             destino = r"C:\Windows\System32\drivers\etc\hosts"
 
             # Copiando o arquivo
             shutil.copyfile(origem, destino)
-            messagebox.showinfo("Sucesso", "Arquivo hosts copiado com sucesso.")
+
         except Exception as e:
+            # Warning: Mac OS X doest not support this function
             messagebox.showerror("Erro", f"Falha ao copiar o arquivo hosts: {e}")
-            logging.error(f"Erro ao copiar o arquivo hosts: {e}")
+            # Warning: Mac OS X doest not support this function
+            logger.error(f"Erro ao copiar o arquivo hosts: {e}")
 
 
 def request_admin_grant() -> bool:
@@ -225,38 +245,17 @@ def request_admin_grant() -> bool:
         return False
 
 
-def get_sites_from_blocklist() -> list:
-    # try:
-    #     blocklist_file_path = get_path_from_context("blocklist.txt")
-    #     with open(blocklist_file_path, "r") as file:
-    #         sites = file.readlines()
-
-    pass
-
-
-def blocklist_load():
-    """Carrega a lista de sites bloqueados do arquivo blocklist.txt."""
+def is_exists_firewall_rule(dominio):
+    """Verifica se a regra de bloqueio já existe no firewall."""
     try:
-        blocklist_file_path = get_path_from_context("blocklist.txt")
-        with open(blocklist_file_path, "r") as file:
-            sites = file.readlines()
-            if not sites:
-                messagebox.showinfo(
-                    "Informação", "A lista de sites bloqueados está vazia."
-                )
-            else:
-                for site in sites:
-                    site = site.strip()  # Remove espaços em branco
-                    if site:  # Adiciona apenas se não estiver vazio
-                        lista.insert(tk.END, site)
-    except FileNotFoundError:
-        logger.error("Arquivo de blocklist não encontrado. Criando um novo arquivo.")
-        with open(blocklist_file_path, "w") as file:
-            file.write("")  # Cria um novo arquivo se não existir
-        messagebox.showerror(
-            "Erro", "Arquivo de blocklist não encontrado. Um novo arquivo foi criado."
-        )
-        blocklist_load()
+        rule_name = f"Bloqueio de {dominio}"
+        output = os.popen(
+            'netsh advfirewall firewall show rule name="{}"'.format(rule_name)
+        ).read()
+        return rule_name in output
+    except Exception as e:
+        logger.error(f"Erro ao verificar regra: {e}")
+        return False
 
 
 def domain_block(dominio: str) -> bool:
@@ -274,6 +273,3 @@ def domain_block(dominio: str) -> bool:
     except Exception as e:
         logger.error(f"Falha ao bloquear {dominio} no arquivo hosts: {e}")
         return False
-
-
-blocklist_load()
