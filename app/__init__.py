@@ -57,7 +57,7 @@ class AppInitializer:
 
     def run(self):
         self.app_window.mainloop()
-        logger.info("Aplicação iniciada com sucesso.")
+        logger.info("Aplicação encerrada.")
 
     def get_or_create_blocklist_path(self):
         file_path = get_path_from_context("blocklist.txt")
@@ -159,7 +159,7 @@ class AppInitializer:
             text="Bloquear DNS",
             width=15,
             height=2,
-            bg=AppColors.AZUL.value,
+            bg=AppButtonColors.AZUL.value,
             fg=AppColors.BRANCO.value,
             command=copy_hosts,
             relief="flat",
@@ -185,14 +185,14 @@ class AppInitializer:
         img.resize((40, 40))
         img_tk = ImageTk.PhotoImage(img)
 
-        tk.Label(
+        img_frame = tk.Label(
             self.app_frame_logo,
             height=60,
             image=img_tk,
             bg=AppColors.CINZA_CLARO.value,
             text="Bloqueador de Apostas",
         )
-        self.app_label_logo.place(x=20, y=0)
+        img_frame.place(x=20, y=0)
 
     def get_sites_from_blocklist(self) -> list:
         with open(self.blocklist_path, "r") as file:
