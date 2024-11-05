@@ -46,7 +46,10 @@ class AppInitializer:
         app_label_line.place(x=0, y=57)
 
     def setup_frame_body(self):
-
+        blocklist = tk.Label(self.app_frame_body,
+                             text="Lista de bets bloqueadas",
+                             height=1, font=('Ivy', 12),
+                             bg=AppColors.CINZA_CLARO.value, fg=AppColors.PRETO.value)
 
         def setup_app_logo(self):
             tk.Label(self.app_frame_logo,
@@ -56,7 +59,7 @@ class AppInitializer:
                      text="Bloqueador de Apostas"
             self.app_label_logo.place(x=20, y=0)
 
-        # blacklist_filepath = get_path_from_context("blacklist.txt")
+        # blocklist_filepath = get_path_from_context("blocklist.txt")
 
 def request_admin_grant() -> bool:
     """ # Função para solicitar permissão de administrador """
@@ -68,11 +71,11 @@ def request_admin_grant() -> bool:
         return False
 
 
-def blacklist_load():
-    """Carrega a lista de sites bloqueados do arquivo blacklist.txt."""
+def blocklist_load():
+    """Carrega a lista de sites bloqueados do arquivo blocklist.txt."""
     try:
-        blacklist_file_path = get_path_from_context("blacklist.txt")
-        with open(blacklist_file_path, "r") as file:
+        blocklist_file_path = get_path_from_context("blocklist.txt")
+        with open(blocklist_file_path, "r") as file:
             sites = file.readlines()
             if not sites:
                 messagebox.showinfo("Informação", "A lista de sites bloqueados está vazia.")
@@ -82,11 +85,11 @@ def blacklist_load():
                     if site:  # Adiciona apenas se não estiver vazio
                         lista.insert(tk.END, site)
     except FileNotFoundError:
-        logger.error("Arquivo de blacklist não encontrado. Criando um novo arquivo.")
-        with open(blacklist_file_path, "w") as file:
+        logger.error("Arquivo de blocklist não encontrado. Criando um novo arquivo.")
+        with open(blocklist_file_path, "w") as file:
             file.write("")  # Cria um novo arquivo se não existir
-        messagebox.showerror("Erro", "Arquivo de blacklist não encontrado. Um novo arquivo foi criado.")
-        blacklist_load()
+        messagebox.showerror("Erro", "Arquivo de blocklist não encontrado. Um novo arquivo foi criado.")
+        blocklist_load()
 
 def domain_block(dominio: str) -> bool:
     """Adiciona uma entrada ao arquivo hosts para bloquear um domínio."""

@@ -22,10 +22,10 @@ def bloquear_sites(checkbox_var, lista, progresso, janela):
         return
 
     try:
-        blacklist_path = get_path_from_context(file_name="blocklist.txt")
-        logger.info(f"Usando o seguinte arquivo de blacklist: {blacklist_path}")
+        blocklist_path = get_path_from_context(file_name="blocklist.txt")
+        logger.info(f"Usando o seguinte arquivo de blocklist: {blocklist_path}")
 
-        with open(blacklist_path, "r") as file:
+        with open(blocklist_path, "r") as file:
             sites = file.readlines()
             if not sites:
                 messagebox.showwarning("Aviso", "A lista de sites a serem bloqueados está vazia.")
