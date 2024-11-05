@@ -8,7 +8,7 @@ from tkinter import BooleanVar, ttk, messagebox
 from PIL import Image, ImageTk
 
 from src.utils.get_paths import get_path_from_context
-from src.functions.blocker import bloquear_sites
+from src.functions.blocker import restrict_sites
 from src.utils.logs import logger
 
 
@@ -31,7 +31,9 @@ class AppInitializer:
     def __init__(self):
         # Setup main app window
         self.app_window = tk.Tk()
-        self.app_window.title("Bloqueador de Apostas")  # Corrigido para setar o título corretamente
+        self.app_window.title(
+            "Bloqueador de Apostas"
+        )  # Corrigido para setar o título corretamente
         self.app_window.geometry("410x460")
         self.app_window.configure(background=AppColors.CINZA_CLARO.value)
         self.app_window.resizable(width=False, height=False)
@@ -81,10 +83,15 @@ class AppInitializer:
     def setup_frame_logo(self):
         # Logo image
         logo = Image.open(get_path_from_context("assets/block.png")).resize((40, 40))
-        self.logo_image = ImageTk.PhotoImage(logo)  # Guarda a imagem como atributo da classe
+        self.logo_image = ImageTk.PhotoImage(
+            logo
+        )  # Guarda a imagem como atributo da classe
 
         app_label_img = tk.Label(
-            self.app_frame_logo, height=60, image=self.logo_image, bg=AppColors.CINZA_CLARO.value
+            self.app_frame_logo,
+            height=60,
+            image=self.logo_image,
+            bg=AppColors.CINZA_CLARO.value,
         )
         app_label_img.place(x=20, y=0)
 
@@ -163,7 +170,7 @@ class AppInitializer:
             height=2,
             bg=AppColors.VERDE.value,
             fg=AppColors.BRANCO.value,
-            command=lambda: bloquear_sites(
+            command=lambda: restrict_sites(
                 _chk_choice, lstbox_blocklist, progress_bar, self.app_window
             ),
             relief="flat",
@@ -180,7 +187,9 @@ class AppInitializer:
             command=copy_hosts,
             relief="flat",
         )
-        copy_hosts_button.place(x=270, y=150)  # Mantém a posição correta para evitar sobreposição
+        copy_hosts_button.place(
+            x=270, y=150
+        )  # Mantém a posição correta para evitar sobreposição
 
         support_button = tk.Button(
             self.app_frame_body,
