@@ -10,12 +10,11 @@ import socket
 import ctypes
 import shutil
 
-#import from functions/firewall.py
 from functions.firewall import bloquear_no_firewall
 from functions.blocker import bloquear_sites
 
 # Configuração de log
-logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log', 
+logging.basicConfig(level=logging.DEBUG, filename='bloqueador.log',
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Caminho do arquivo de blacklist
@@ -60,7 +59,7 @@ def copiar_hosts():
             # Caminho do arquivo de origem e destino
             origem = os.path.join(diretorio_atual, "hosts")
             destino = r"C:\Windows\System32\drivers\etc\hosts"
-            
+
             # Copiando o arquivo
             shutil.copyfile(origem, destino)
             messagebox.showinfo("Sucesso", "Arquivo hosts copiado com sucesso.")
@@ -107,7 +106,7 @@ def bloquear_por_dominio(dominio):
 
         with open(r"C:\Windows\System32\drivers\etc\hosts", "a") as hosts_file:
             hosts_file.write(f"0.0.0.0 {dominio}\n")
-        
+
         logging.info(f"Domínio {dominio} bloqueado com sucesso.")
         return True
     except Exception as e:
@@ -133,24 +132,24 @@ l_logo = tk.Label(frame_logo, text="Bloqueador de Apostas", height=1, anchor="ne
 l_logo.place(x=70, y=12)
 
 l_linha = tk.Label(
-    frame_logo, 
-    text="Bloqueador de Apostas", 
-    height=1, 
-    width="445", 
-    anchor="nw", 
-    font=('Ivy', 1), 
+    frame_logo,
+    text="Bloqueador de Apostas",
+    height=1,
+    width="445",
+    anchor="nw",
+    font=('Ivy', 1),
     bg=co2
 )
 l_linha.place(x=0, y=57)
 
 # Configurando frame corpo font negrito
 l_blacklist = tk.Label(
-    frame_corpo, 
-    text="Lista de bets bloqueadas", 
+    frame_corpo,
+    text="Lista de bets bloqueadas",
     height=1, font=('Ivy', 12),
-    bg=co1, 
-    fg=co4, 
-    anchor="w", 
+    bg=co1,
+    fg=co4,
+    anchor="w",
     justify="left",
     wraplength=380
 )
