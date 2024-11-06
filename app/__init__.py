@@ -1,4 +1,5 @@
-import os
+import os, sys
+import platform
 import ctypes
 import shutil
 from enum import Enum
@@ -164,19 +165,20 @@ class AppInitializer:
         check_box.place(x=15, y=360)
 
         # Buttons
-        block_button = tk.Button(
-            self.app_frame_body,
-            text="Bloquear Firewall",
-            width=15,
-            height=2,
-            bg=AppColors.VERDE.value,
-            fg=AppColors.BRANCO.value,
-            command=lambda: restrict_sites(
-                _chk_choice, lstbox_blocklist, progress_bar, self.app_window
-            ),
-            relief="flat",
-        )
-        block_button.place(x=270, y=52)
+        if platform.system() == "Windows":
+            block_button = tk.Button(
+                self.app_frame_body,
+                text="Bloquear Firewall",
+                width=15,
+                height=2,
+                bg=AppColors.VERDE.value,
+                fg=AppColors.BRANCO.value,
+                command=lambda: restrict_sites(
+                    _chk_choice, lstbox_blocklist, progress_bar, self.app_window
+                ),
+                relief="flat",
+            )
+            block_button.place(x=270, y=52)
 
         copy_hosts_button = tk.Button(
             self.app_frame_body,
@@ -219,8 +221,33 @@ def request_admin_grant():
         )
         return False
 
+# Requisitar permissão de administrador no Linux
+def request_sudo_grant() -> None:
+    # Testando se o usuário executou o processo como root
+    if os.geteuid() != 0:
+        os.execvp('sudo', ['sudo', 'python3'] + sys.argv)
+
+    return True
+
+# Requisitar permissão de administrador no MacOS
+def request_doas_grant() -> bool:
+    pass # todo
 
 def copy_hosts():
+    match platform.system():
+        case "Windows":
+            copy_windows_hosts()
+
+        case "Linux":
+            copy_linux_hosts()
+
+        case "Darwin":
+            copy_macos_hosts()
+
+        case _:
+            print("Sistema operacional não reconhecido!")
+
+def copy_windows_hosts():
     """Copia o arquivo ./hosts para C:\Windows\System32\drivers\etc\hosts."""
     if request_admin_grant():
         try:
@@ -230,3 +257,21 @@ def copy_hosts():
         except Exception as e:
             messagebox.showerror("Erro", f"Falha ao copiar o arquivo hosts: {e}")
             logger.error(f"Erro ao copiar o arquivo hosts: {e}")
+
+def copy_linux_hosts():
+    """Copia o arquivo ./hosts para /etc/hosts"""
+    request_sudo_grant()
+    try:
+        origem = get_path_from_context("hosts")
+        with open("/etc/hosts", "a") as destino:
+            with open(origem, "r") as host_para_bloquear:
+                destino.write("\n\n")
+                destino.write(host_para_bloquear.read())
+
+    except Exception as e:
+        messagebox.showerror("Erro", f"Falha ao copiar o arquivo hosts: {e}")
+        logger.error(f"Erro ao copiar o arquivo hosts: {e}")
+
+# To do
+def copy_macos_hosts():
+    pass
