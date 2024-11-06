@@ -1,0 +1,42 @@
+name: Avoid Duplicated BET
+
+on:
+  push:
+    branches:
+    - main
+    - '**feature**'
+    - '**feat**'
+    - '**bugfix**'
+    - '**fix**'
+    - '**release**'
+  pull_request:
+    branches:
+    - main
+    - '**feature**'
+    - '**feat**'
+    - '**bugfix**'
+    - '**fix**'
+    - '**release**'
+
+jobs:
+  check-duplicates:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: ./_cicd/
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Avoid Duplicated BET at Blocked List
+        run: |
+          python avoid_dup_bet.py
