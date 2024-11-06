@@ -1,9 +1,34 @@
 # BetBlocker
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7efbc8f9-8fe4-429e-8bae-1c6efa3a4453" alt="screen-home" width="1200">
+</p>
+
 A ideia deste repositório é criar um software focado em bloquear e impedir o acesso a sites de apostas. Essa ferramenta foi criada para ajudar pessoas que desejam se proteger contra os efeitos nocivos do vício em apostas online, oferecendo uma camada de proteção que limita o acesso a plataformas de jogos de azar.
 
 ### Objetivo
 O BetBlocker foi pensado para que o próprio usuário ou familiares preocupados possam instalá-lo em dispositivos (computadores e, em breve, celulares) para bloquear sites de apostas de forma eficiente. Esse software visa ser um recurso acessível e de apoio para aqueles que reconhecem os riscos do vício em apostas e desejam tomar medidas preventivas.
+
+### Requisitos básicos
+- Python 2.7
+- Windows ou Linux
+
+### Com rodar
+Clone o repositório para sua máquina.
+
+```bash
+git clone https://github.com/jhowbhz/bet-blocker.git bet-blocker
+```
+
+Instale as dependencias
+```bash
+cd bet-blocker && pip install -r requirements.txt
+```
+
+Para rodar o projeto
+```bash
+python main.py
+```
 
 ### Funcionamento
 O BetBlocker realiza bloqueios por meio de configurações de firewall e ajustes no arquivo hosts para impedir o acesso a sites de apostas conhecidos. Além disso, oferece uma funcionalidade para configurar uma rede de apoio, uma opção que garante suporte ao usuário caso ele queira desbloquear ou remover o software de proteção em um momento de crise.
